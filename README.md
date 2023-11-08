@@ -1,10 +1,12 @@
 # Care Petkage
 Do stream with your digital pet that care your twitch chat  
 
-AI 커뮤니티: https://huggingface.co/
+If you need use pre-trained model: https://huggingface.co/
 
-Twitch APT: https://dev.twitch.tv/docs/irc/  
+If you need know offical Twitch API: https://dev.twitch.tv/docs/irc/  
 
-트위치 공식 챗 로그 다운로드: https://www.twitchchatdownloader.com/  
+If you need know python twitchAPI Document: https://pytwitchapi.dev/en/stable/modules/twitchAPI.twitch.html#twitchAPI.twitch.Twitch.get_chatters
 
-Python twitchAPI Document: https://pytwitchapi.dev/en/stable/modules/twitchAPI.twitch.html#twitchAPI.twitch.Twitch.get_chatters
+
+If you need use Twitch Chat Log Downloader: https://www.twitchchatdownloader.com/  
+
