@@ -1,12 +1,10 @@
-# Care Petkage
 Do stream with your digital pet that care your twitch chat  
-
+# Reference
 If you need use pre-trained model: [huggingface.co](https://huggingface.co/)
 
 If you need know offical Twitch API: [dev.twitch.tv](https://dev.twitch.tv/docs/irc/ ) 
 
 If you need know python twitchAPI Document: [twitchAPI.twitch](https://pytwitchapi.dev/en/stable/modules/twitchAPI.twitch.html#twitchAPI.twitch.Twitch.get_chatters)
-
 
 If you need use Twitch Chat Log Downloader: [twitchchatdownloader](https://www.twitchchatdownloader.com/  )
 
