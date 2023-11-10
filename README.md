@@ -11,3 +11,5 @@ If you need know python twitchAPI Document: [twitchAPI.twitch](https://pytwitcha
 If you need use Twitch Chat Log Downloader: [twitchchatdownloader](https://www.twitchchatdownloader.com/  )
 
 [How to Stream Text Data from Twitch with Sockets in Python](https://github.com/LearnDataSci/articles/tree/master/How%20to%20Stream%20Text%20Data%20from%20Twitch%20with%20Sockets%20in%20Python)
+
+[Short Text Classification: A Quick Guide | Levity](https://levity.ai/blog/short-text-classification)
