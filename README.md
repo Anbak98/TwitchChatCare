@@ -12,4 +12,5 @@ If you need use Twitch Chat Log Downloader: [twitchchatdownloader](https://www.t
 
 [Short Text Classification: A Quick Guide | Levity](https://levity.ai/blog/short-text-classification)
 
-[We need Datase like this](thttps://www.kaggle.com/datasets/mowglii/twitch-chat-test-data/data)
+[We need Datase like this](https://www.kaggle.com/datasets/mowglii/twitch-chat-test-data/data)
+https://medium.com/coders-camp/nlp-for-whatsapp-chats-data-science-machine-learning-python-c9e2c81ef2ed
