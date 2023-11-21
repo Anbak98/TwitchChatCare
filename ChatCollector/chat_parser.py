@@ -21,7 +21,7 @@ def get_chat_dataframe(file):
                 ).groups()
 
                 d = {
-                    'dt': time_logged,
+                    'datetime': time_logged,
                     'channel': channel,
                     'username': username,
                     'message': message,
