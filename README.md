@@ -5,7 +5,22 @@ Do stream with your digital pet that care your twitch chat
 3. run 'chat_parser.py' in directory '/TwitchChatCare/ChatCollector/'
 4. now you have 'example.xlsx' in directory '/TwitchChatCare/'
 
-
+# Label
+- intention: 
+  - 0: 일반대화
+  - 1: 감정표현
+  - 2: 질문
+  - 3: 의견제시
+- is_sarcasm: 
+  - 0: True, 중의적이다
+  - 1: false, 중의적이지 않다
+- sentiment: 
+  - 0: 중립
+  - 1: 긍정
+  - 2: 부정
+- agreement: 
+  - 0: True, 동의
+  - 1: false, 비동의
 # Reference
 If you need use pre-trained model: [huggingface.co](https://huggingface.co/)
 
