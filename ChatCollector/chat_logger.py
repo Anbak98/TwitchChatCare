@@ -9,9 +9,9 @@ logging.basicConfig(level=logging.DEBUG,
 
 server = 'irc.chat.twitch.tv'
 port = 6667
-nickname = '' #본인 트위치 닉네임
-token = '' #https://twitchapps.com/tmi/ 여기 들어가서 트위치계정으로 로그인하면 'oauth:30dfjl~어쩌구' 이런식으로 토큰이 나옵니다. 그거 복붙하시면 됩니다.
-channel = '' #특정 스트리머 아이디 (주소창 클릭 후 아이디만 복붙하시면 됩니다.) ex)#woowakgood <-#붙이고 복붙
+nickname = '???' #본인 트위치 닉네임
+token = '???' #https://twitchapps.com/tmi/ 여기 들어가서 트위치계정으로 로그인하면 'oauth:30dfjl~어쩌구' 이런식으로 토큰이 나옵니다. 그거 복붙하시면 됩니다.
+channel = '???' #특정 스트리머 아이디 (주소창 클릭 후 아이디만 복붙하시면 됩니다.) ex)#woowakgood <-#붙이고 복붙
 
 
 def main():

@@ -1,4 +1,10 @@
 Do stream with your digital pet that care your twitch chat  
+# How to get dataset using twitch chat
+1. run 'chat_logger.py' in directory './ChatCollector/" #Waring! berfore run 'chat_logger.py', you muse modify line 12, 13, 14 in 'chat_logger.py'
+2. run 'chat_parser.py'
+3. now you have 'example.xlsx'
+
+
 # Reference
 If you need use pre-trained model: [huggingface.co](https://huggingface.co/)
 

@@ -1,14 +1,13 @@
-import pandas as pd
 from datetime import datetime
+import pandas as pd
 import re
-
 
 def get_chat_dataframe(file):
     data = []
 
     with open(file, 'r', encoding='utf-8') as f:
         lines = f.read().split('\n\n\n')
-
+        
         for line in lines:
             try:
                 time_logged = line.split('—')[0].strip()
@@ -18,21 +17,28 @@ def get_chat_dataframe(file):
                 username_message = '—'.join(username_message).strip()
 
                 username, channel, message = re.search(
-                        ':(.*)\!.*@.*\.tmi\.twitch\.tv PRIVMSG #(.*) :(.*)', username_message
+                    ':(.*)\\!.*@.*\\.tmi\\.twitch\\.tv PRIVMSG #(.*) :(.*)', username_message
                 ).groups()
 
                 d = {
                     'dt': time_logged,
                     'channel': channel,
                     'username': username,
-                    'message': message
+                    'message': message,
+                    'intention' : None,
+                    'is_sarcasm' : None,
+                    'sentiment' : None,
+                    'agreement' : None,
                 }
 
                 data.append(d)
-
+            
             except Exception:
                 pass
-
+            
     return pd.DataFrame().from_records(data)
-
+        
 df = get_chat_dataframe('chat.log')
+# Specify the Excel file path
+excel_file_path = 'Dataset_Twitch_Chat.xlsx'
+df.to_excel(excel_file_path, index=False)
