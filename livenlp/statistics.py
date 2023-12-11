@@ -15,29 +15,40 @@ from collections import Counter
 
 
 
-def show_word_count(df_normalized, word, diff = False, highlight = False, scaler = 'default', timestep = 'S'):
+def show_word_count(df_normalized, word, diff = False, highlight = False, show=False, scaler = 'default', timestep = 'S'):
     df_z = df_normalized[df_normalized['message'] == word]
     count_by_time = df_z.resample(timestep, on='datetime').count()
+    result = count_by_time
+    title = 'Use: Count'
+    ylabel = 'Count'
     if diff:
         count_by_time['message'] = count_by_time['message'].diff()
+        title += ' ,diff'
+        ylabel = 'diff'
     if scaler == 'R':
         count_by_time['message'] = RobustScaler().fit_transform(count_by_time['message'].values.reshape((-1, 1)))
+        title += ' ,Robust'
     elif scaler == 'M':
         count_by_time['message'] = MinMaxScaler().fit_transform(count_by_time['message'].values.reshape((-1, 1)))
+        title += ' ,MinMax'
     elif scaler == 'S':
         count_by_time['message'] = StandardScaler().fit_transform(count_by_time['message'].values.reshape((-1, 1)))
+        title += ' ,Standart'
     # Plot the graph
     if highlight:
-        count_by_time['message'] = count_by_time[count_by_time['message'].abs() > count_by_time['message'].abs().mean()+2]['message']
-     # Perform changepoint detection using Pelt
-    plt.figure(figsize=(15,6))
-    plt.plot(count_by_time.index, count_by_time['message'])
-    plt.title('Count of "ㅋㅋ" Messages Over Time')
-    plt.xlabel('Timestamp')
-    plt.ylabel('Count')
-    plt.grid(True)
-    plt.show()
-    return count_by_time['message'].reset_index()
+        count_by_time['message'] = count_by_time['message'].apply(lambda row: row if (row >= 0.625) else None)
+        title += ' ,highligt'
+    if show:
+        # Perform changepoint detection using Pelt
+        plt.figure(figsize=(50,6))
+        plt.plot(count_by_time.index, count_by_time['message'])
+        plt.title(title)
+        plt.xlabel('Timestamp')
+        plt.ylabel(ylabel)
+        plt.grid(True)
+        plt.show()
+    result = count_by_time['message'].reset_index()
+    return result
 
 def get_highlight_continuous(df_normalized, word, diff = False, highlight = False, scaler = 'default', timestep = 'S'):
     df_z = df_normalized[df_normalized['message'] == word]
@@ -140,7 +151,7 @@ def get_word_count_by_datetime(df, how='exploded'):
     # Print the
     return word_count_by_datetime
 
-def relation_score(df, df_drop):
+def relation_score(df, df_drop=None):
     relation_score = pd.DataFrame(columns=['word', 'count', 'ratio', 'density'])
     
     # Combine all messages into a single string
@@ -155,17 +166,22 @@ def relation_score(df, df_drop):
 
     relation_score['word'] = df_word_count['word']
     relation_score['count'] = df_word_count['count']
-    for n, word in df_drop.iterrows():
-        relation_score = relation_score[relation_score['word'] != word['message']]
+    if df_drop != None:
+        for n, word in df_drop.iterrows():
+            relation_score = relation_score[relation_score['word'] != word['message']]
     relation_score['ratio'] = relation_score['count'] / relation_score['count'].sum()
-    return relation_score
-
-def sum(df, float):
-    print(df)
-    df['score'] += float
-    print(df)
-
-    
+    for n, word in relation_score.iterrows():
+        escaped_word = re.escape(word['word'])
+        density = df[df['message'].str.contains(escaped_word, case=False, na=False)].reset_index(drop=True)
+        density = pd.concat([df.head(1), density], ignore_index=True)
+        density = pd.concat([density, df.tail(1)], ignore_index=True)
+        result = density['datetime'].diff().diff().abs().std().total_seconds()
+        relation_score.at[n, 'density'] = result
+    relation_score['ratio'] = RobustScaler().fit_transform(relation_score['ratio'].values.reshape((-1, 1)))
+    relation_score['density'] = RobustScaler().fit_transform(relation_score['density'].values.reshape((-1, 1)))
+    relation_score['ratio'] = pd.DataFrame(relation_score['ratio']).round(5)
+    relation_score['density'] = pd.DataFrame(relation_score['density']).round(5)
+    return relation_score   
 
 def df_relation_score(df, relation_score):
     print(df, relation_score)
@@ -182,3 +198,8 @@ def df_relation_score(df, relation_score):
 
     # Print
     return df_relation_score
+
+def density(df, word):
+    density = df[df['message'].str.contains(word, case=False)]
+    result = density['datetime'].diff().diff().abs().mean()
+    return result.total_seconds()
