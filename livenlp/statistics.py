@@ -151,32 +151,28 @@ def get_word_count_by_datetime(df, how='exploded'):
     # Print the
     return word_count_by_datetime
 
-def relation_score(df, df_drop=None):
+def relation_score(livechat, drop_df):
     relation_score = pd.DataFrame(columns=['word', 'count', 'ratio', 'density'])
     
-    # Combine all messages into a single string
-    all_messages = ' '.join(df['message'].astype(str))
-    # Tokenize the string into words
-    words = all_messages.split()
-    # Create a DataFrame for word count
-    df_word_count = pd.DataFrame(pd.Series(words).value_counts().reset_index())
-    df_word_count.columns = ['word', 'count']
-    # Sort the DataFrame by count in descending order
-    df_word_count = df_word_count.sort_values(by='count', ascending=False).reset_index(drop=True)
-
-    relation_score['word'] = df_word_count['word']
-    relation_score['count'] = df_word_count['count']
-    if df_drop != None:
-        for n, word in df_drop.iterrows():
-            relation_score = relation_score[relation_score['word'] != word['message']]
-    relation_score['ratio'] = relation_score['count'] / relation_score['count'].sum()
+    relation_score['word'] = livechat.df_normalized_word_count['word']
+    relation_score['count'] = livechat.df_normalized_word_count['count']
+    df = livechat.df_normalized_exploded
+    if not drop_df.empty:
+        # Create a list of messages to drop
+        messages_to_drop = drop_df['message'].tolist()
+        
+        # Drop rows from df where the 'message' column matches any entry in messages_to_drop
+        df = df[~df['message_tokens'].isin(messages_to_drop)]
+        print(df)
     for n, word in relation_score.iterrows():
         escaped_word = re.escape(word['word'])
-        density = df[df['message'].str.contains(escaped_word, case=False, na=False)].reset_index(drop=True)
+        density = df[df['message_tokens'].str.contains(escaped_word)].reset_index(drop=True)
         density = pd.concat([df.head(1), density], ignore_index=True)
         density = pd.concat([density, df.tail(1)], ignore_index=True)
         result = density['datetime'].diff().diff().abs().std().total_seconds()
         relation_score.at[n, 'density'] = result
+    relation_score = relation_score.dropna(subset=['density'])
+    relation_score['ratio'] = relation_score['count'] / relation_score['count'].sum()
     relation_score['ratio'] = RobustScaler().fit_transform(relation_score['ratio'].values.reshape((-1, 1)))
     relation_score['density'] = RobustScaler().fit_transform(relation_score['density'].values.reshape((-1, 1)))
     relation_score['ratio'] = pd.DataFrame(relation_score['ratio']).round(5)
@@ -184,14 +180,13 @@ def relation_score(df, df_drop=None):
     return relation_score   
 
 def df_relation_score(df, relation_score):
-    print(df, relation_score)
     # Create a new column 'score' based on the condition
     # Create a new column 'score' in df
     df['score'] = 0
 
     # Update 'score' column based on the condition
     for i, word in relation_score.iterrows():
-        df.loc[df['word'] == word['word'], 'score'] += word['ratio']
+        df.loc[df['word'] == word['word'], 'score'] += word['density']
 
     # Group by datetime and sum the scores
     df_relation_score = df.groupby('datetime')['score'].sum().reset_index()
