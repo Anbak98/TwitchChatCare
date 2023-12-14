@@ -1,6 +1,6 @@
 import livenlp as lvn
 from livenlp import livechat as lvc
-from livenlp import statistics as lvns
+from livenlp import statistics as lvs
 import pandas as pd
 
 ############################################
@@ -22,43 +22,29 @@ normalize_target = [['ㅋ' , 2],
                     ['ㄹㅇ' , 1],
                     ['ㅇㅈ' , 1],
                     ] # 정규식에 의거
-sentiment = [{'재미' : ['ㅋㅋ']}, 
+vibe = [    {'재미' : ['ㅋㅋ']}, 
             {'감탄' : ['캬', '와']},
             {'의문' : ['?']},
             {'놀람' : ['ㄷㄷ', '헉', '어어']},
             {'동의' : ['ㄹㅇ', 'ㅇㅇ', 'ㄹㅇㅋㅋ']},
             {'답답' : ['아니', '아오']},
             {'실망' : ['아']},
-            {'비웃음': ['ㅋ']}]
+            {'비웃음': ['ㅋ']}
+            ]
 top_k= 100
 ############################################
 ############################################
-
 df_paka = lvn.get_chat_dataframe("./log/chat_paka.log")
 df_mstrat = lvn.get_chat_dataframe("./log/chat_mstrat.log")
 df_ralo = lvn.get_chat_dataframe("./log/chat_ralo.log")
 
-paka = lvc.livechat(df_paka, sentiment=sentiment, normalize_target=normalize_target, top_k=top_k, custom_target=custom_target)
-mstrat = lvc.livechat(df_mstrat, sentiment=sentiment, normalize_target=normalize_target, top_k=top_k, custom_target=custom_target)
-ralo = lvc.livechat(df_ralo, sentiment=sentiment, normalize_target=normalize_target, top_k=top_k, custom_target=custom_target)
+paka = lvc.livechat(df_paka, vibe, normalize_target, top_k)
+mstrat = lvc.livechat(df_mstrat, vibe, normalize_target, top_k)
+ralo = lvc.livechat(df_ralo, vibe, normalize_target, top_k)
 
 subword = lvc.get_common_subword([paka.df_subword, mstrat.df_subword, ralo.df_subword])
-print(subword)
-# df_merget_subword = lvc.get_common_subword([df_subword])
-# # lvns.show_changepoint()
-# lvns.show_word_count(df_normalized, 'ㅋㅋ', diff= False, highlight=False, scaler='R').to_csv('./A.xlsx', index=False)
-# lvns.show_word_count(df_normalized, 'ㅋㅋ', diff= False, highlight=True, scaler='R')
 
-# print(lvns.density(paka.df_normalized, "엄신"))
-# print(lvns.density(paka.df_normalized, "ㅎㅎㅈㅅ"))
-# lvns.show_word_count(paka.df_normalized, 'ㅋㅋ', diff= True, highlight=True, scaler='M')
-df_highlight_time, df_highlight_counter = lvns.get_highlight_time(lvns.show_word_count(paka.df_normalized, 'ㅋㅋ', diff= False, highlight=True, scaler='R'))
-df_highlight = lvns.get_highlight_word(paka.df_normalized, df_highlight_time)
-df_word_count_by_datetime = lvns.get_word_count_by_datetime(df_highlight)
-
-paka_relation_score = lvns.relation_score(paka, subword)
-
-print(lvns.df_relation_score(df_word_count_by_datetime, paka_relation_score))
-# # lvns.show_word_count(df_normalized, 'ㅋㅋ', diff= False, highlight=True, scaler='R'
-# df_highlight = pd.DataFrame(lvns.get_highlight_continuous(df_normalized, 'ㅋㅋ', diff= False, highlight=True, scaler='R').reset_index())
-paka_relation_score.to_csv('./A.xlsx', index=False)
+ralo_score = lvs.statistics(ralo, subword)
+paka_score = lvs.statistics(paka, subword)
+paka_score.relation_score.to_csv('./A.xlsx', index=False)
+print(paka_score.relation_score)
